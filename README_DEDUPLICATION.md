@@ -22,13 +22,13 @@ The stub names the role, the 1-based position of the first copy among that role'
 
 Properties the pass guarantees, each backed by tests:
 
-- **Nothing is lost.** The first copy is always rendered in full. Only exact repeats are replaced. Near-duplicates, such as one byte different, CRLF against LF, or NFC against NFD, are left alone. Assistant messages and non-text parts (images, audio) are never touched.
+- **The first copy always stays.** It is rendered in full, and only later exact repeats are replaced. Near-duplicates, such as one byte different, CRLF against LF, or NFC against NFD, are left alone. Assistant messages and non-text parts (images, audio) are never touched.
 - **Stateless and deterministic.** Each request is processed on its own. No index, cache or statistic survives the request, and the output does not depend on slot state, time, hash seed or iteration order.
 - **Prompt-cache friendly.** Appending a turn never changes the rendering of earlier turns, so the server's prompt cache keeps hitting from turn to turn.
 - **Safe with the model's special tokens.** Stubs never contain the served vocabulary's control or special-token text. Tool names and excerpts are escaped, so a stub cannot open a fake role boundary.
 - **Off by default.** With the pass off, the rendered prompt is byte-identical to upstream llama.cpp.
 
-This works on the prompt text. It is not a KV-cache change and needs no model support. It fits hybrid and recurrent models such as Qwen3.5/3.6, where partial KV reuse is impossible, because the rewritten prompt is still an ordinary prompt.
+The pass rewrites prompt text, not the KV cache, so it needs no model support. That also makes it usable on hybrid and recurrent models such as Qwen3.5/3.6, which cannot reuse part of a KV cache: the rewritten prompt is still an ordinary prompt.
 
 ## How to use it
 
@@ -126,8 +126,8 @@ Static checks run against the same scenarios on the served template. Every liste
 
 ### What the evidence does and does not show
 
-- It shows that on these 15 agent workloads the pass removes up to 62% of the prompt, and the model still completes every task on both greedy and seeded decoding.
-- It is 2 runs per arm per scenario, not a statistical study. It can rule out breakage of these use cases, but not a small change in success rates.
+- On these 15 agent workloads the pass removes up to 62% of the prompt, and the model still completes every task with both greedy and seeded decoding.
+- With 2 runs per arm per scenario, the suite rules out breakage of these use cases but cannot detect a small change in success rates.
 - The first full run failed 4 scenarios. Three (A1, B3, R2) also failed with the pass off, so they were scenario defects and were fixed in the scenario data. One (A4) came from a checker that was stricter than the specification. The fixes were reviewed and recorded, and the pass criteria were not loosened; the one relaxed check (A4) still fails any re-read of the stubbed file. Still, the green result comes from a suite corrected after seeing results.
 - It was measured on one model family (Qwen3.x) and one GPU. Other models may react to stubs differently.
 - Only exact repeats are handled. Large content that is merely similar is out of scope.
