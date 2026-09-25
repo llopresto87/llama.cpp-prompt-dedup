@@ -1,5 +1,7 @@
 # Instructions for llama.cpp
 
+This repository is a fork of [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp) that adds prompt message deduplication to `llama-server`; see [README_DEDUPLICATION.md](README_DEDUPLICATION.md).
+
 > [!IMPORTANT]
 >
 > AI-generated code is allowed. What is **not** allowed is submitting code you do not understand. You are 100% responsible for every line, however it was produced.
