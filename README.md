@@ -1,5 +1,8 @@
 # llama.cpp
 
+> [!NOTE]
+> This repository is a fork of [ggml-org/llama.cpp](https://github.com/ggml-org/llama.cpp). It adds one opt-in feature to `llama-server`: prompt message deduplication, which replaces later byte-identical copies of a large message with a short reference to the first copy. [README_DEDUPLICATION.md](README_DEDUPLICATION.md) covers what it does, why, how to enable it, and the tests behind it. Everything else below is the upstream README.
+
 ![llama](https://raw.githubusercontent.com/ggml-org/llama.brand/refs/heads/master/cover/llama-cpp/cover-llama-cpp-dark.svg)
 
 <div align="center">
